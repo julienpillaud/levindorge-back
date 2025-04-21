@@ -2,7 +2,7 @@ from fastapi import FastAPI
 
 app = FastAPI(
     title="Le Vin d'Orge",
-    version="0.0.7",
+    version="0.0.8",
     swagger_ui_parameters={
         "tryItOutEnabled": True,
         "displayRequestDuration": True,
