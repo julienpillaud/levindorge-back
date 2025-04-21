@@ -13,3 +13,7 @@ services:
       - traefik.http.routers.api.rule=Host(`${DOMAIN?Variable not set}`)
       - traefik.http.routers.api.entrypoints=http
       - traefik.http.routers.api.tls.certresolver=le
+
+networks:
+  traefik-public:
+    external: true
