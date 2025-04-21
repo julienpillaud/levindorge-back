@@ -1,0 +1,44 @@
+[project]
+name = "levindorge-back"
+version = "0.0.1"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.115.12",
+    "uvicorn>=0.34.2",
+]
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.2.0",
+    "pyright==1.1.399",
+    "pytest>=8.3.5",
+    "ruff==0.11.6",
+]
+
+[tool.ruff]
+output-format = "concise"
+
+[tool.ruff.lint]
+select = [
+    "E", "W",  # pycodestyle
+    "F",  # Pyflakes
+    "UP",  # pyupgrade
+    "B",  # flake8-bugbear
+    "SIM",  # flake8-simplify
+    "I",  # isort
+    "PL",  # Pylint
+    "RUF",
+]
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
+typeCheckingMode = "strict"
+
+[tool.pytest.ini_options]
+testpaths = [
+    "tests",
+]
+log_cli = true
+log_cli_level = "INFO"
+log_cli_format = "%(asctime)s [%(levelname)8s] %(name)30s - %(message)s"
