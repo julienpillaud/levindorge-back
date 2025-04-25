@@ -1,18 +1,5 @@
-from fastapi import FastAPI
+from app.api.app import create_app
+from app.api.dependencies import get_settings
 
-app = FastAPI(
-    title="Le Vin d'Orge",
-    version="0.0.8",
-    swagger_ui_parameters={
-        "tryItOutEnabled": True,
-        "displayRequestDuration": True,
-    },
-)
-
-
-@app.get("/")
-async def root():
-    return {
-        "title": "Le Vin d'Orge",
-        "version": "0.0.1",
-    }
+settings = get_settings()
+app = create_app(settings=settings)
