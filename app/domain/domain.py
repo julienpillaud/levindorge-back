@@ -5,6 +5,7 @@ from contextlib import contextmanager
 from functools import wraps
 from typing import Concatenate, ParamSpec, Protocol, TypeVar
 
+from app.domain.articles.commands import get_articles_command
 from app.domain.context import ContextProtocol
 
 logger = logging.getLogger(__name__)
@@ -53,3 +54,5 @@ class Domain:
 
     def __init__(self, context: TransactionalContextProtocol):
         self.context = context
+
+        self.get_articles = self.command_handler(get_articles_command)
