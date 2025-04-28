@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.articles.router import router as articles_router
 from app.core.config import Settings
 
 
@@ -22,6 +23,8 @@ def create_app(settings: Settings) -> FastAPI:
             allow_methods=["*"],
             allow_headers=["*"],
         )
+
+    app.include_router(articles_router)
 
     @app.get("/")
     async def root():  # type: ignore[reportUnusedFunction]
