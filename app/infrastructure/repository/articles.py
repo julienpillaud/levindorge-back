@@ -1,9 +1,11 @@
+from typing import Any
+
 from bson import ObjectId
 
 from app.domain.articles.entities import Article
 from app.domain.articles.repository import ArticleRepositoryProtocol
 from app.domain.categories.entities import Category
-from app.domain.entities import EntityId
+from app.domain.entities import EntityId, PaginatedResponse, Pagination
 from app.domain.producers.entities import Producer
 from app.infrastructure.repository.base import (
     BaseRepository,
@@ -24,9 +26,34 @@ class ArticleRepository(BaseRepository[Article], ArticleRepositoryProtocol):
             producer=to_domain_entity(model=Producer, document=document["producer"]),
         )
 
+    def get_all(
+        self, pagination: Pagination | None = None
+    ) -> PaginatedResponse[Article]:
+        pagination = pagination or Pagination()
+        skip = (pagination.page - 1) * pagination.limit
+
+        pipeline = [
+            *self._aggregation_pipeline(),
+            {"$skip": skip},
+            {"$limit": pagination.limit},
+        ]
+
+        items = list(self.collection.aggregate(pipeline))
+        total = self.collection.count_documents({})
+
+        return self._paginate_cursor(pagination=pagination, total=total, items=items)
+
     def get_one(self, entity_id: EntityId, /) -> Article | None:
         pipeline = [
             {"$match": {"_id": ObjectId(entity_id)}},
+            *self._aggregation_pipeline(),
+        ]
+        document = next(self.collection.aggregate(pipeline), None)
+        return self._to_domain_entity(document) if document else None
+
+    @staticmethod
+    def _aggregation_pipeline() -> list[dict[str, Any]]:
+        return [
             {
                 "$lookup": {
                     "from": "categories",
@@ -46,5 +73,3 @@ class ArticleRepository(BaseRepository[Article], ArticleRepositoryProtocol):
             },
             {"$unwind": "$producer"},
         ]
-        document = next(self.collection.aggregate(pipeline), None)
-        return self._to_domain_entity(document) if document else None

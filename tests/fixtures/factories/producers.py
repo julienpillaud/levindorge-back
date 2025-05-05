@@ -2,7 +2,8 @@ from typing import Any
 
 from app.domain.entities import EntityId
 from app.domain.producers.entities import Producer
-from tests.fixtures.factories.base import MongoBaseFactory
+
+from .base import MongoBaseFactory
 
 
 class ProducerFactory(MongoBaseFactory[Producer]):

@@ -8,9 +8,10 @@ from app.domain.categories.entities import Category
 from app.domain.entities import EntityId
 from app.domain.producers.entities import Producer
 from app.infrastructure.repository.base import MongoDocument
-from tests.fixtures.factories.base import MongoBaseFactory
-from tests.fixtures.factories.categories import CategoryFactory
-from tests.fixtures.factories.producers import ProducerFactory
+
+from .base import MongoBaseFactory
+from .categories import CategoryFactory
+from .producers import ProducerFactory
 
 
 class ArticleFactory(MongoBaseFactory[Article]):

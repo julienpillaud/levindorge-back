@@ -2,7 +2,8 @@ from fastapi import status
 from fastapi.testclient import TestClient
 
 from app.domain.entities import DEFAULT_PAGINATION_LIMIT
-from tests.fixtures.factories.articles import ArticleFactory
+
+from ...fixtures.factories.articles import ArticleFactory
 
 
 def test_get_articles(article_factory: ArticleFactory, client: TestClient):

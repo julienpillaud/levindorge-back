@@ -2,7 +2,8 @@ from typing import Any
 
 from app.domain.categories.entities import Category
 from app.domain.entities import EntityId
-from tests.fixtures.factories.base import MongoBaseFactory
+
+from .base import MongoBaseFactory
 
 
 class CategoryFactory(MongoBaseFactory[Category]):

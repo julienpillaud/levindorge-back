@@ -2,9 +2,10 @@ import pytest
 from pymongo.synchronous.database import Database
 
 from app.infrastructure.repository.base import MongoDocument
-from tests.fixtures.factories.articles import ArticleFactory
-from tests.fixtures.factories.categories import CategoryFactory
-from tests.fixtures.factories.producers import ProducerFactory
+
+from .articles import ArticleFactory
+from .categories import CategoryFactory
+from .producers import ProducerFactory
 
 
 @pytest.fixture(scope="session")

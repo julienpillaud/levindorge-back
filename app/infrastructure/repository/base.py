@@ -30,15 +30,22 @@ class BaseRepository(BaseRepositoryProtocol[T], Generic[T]):
     def _to_database_entity(entity: T) -> MongoDocument:
         return entity.model_dump(exclude={"id"})
 
+    def _paginate_cursor(
+        self,
+        pagination: Pagination,
+        total: int,
+        items: list[MongoDocument],
+    ) -> PaginatedResponse[T]:
+        entities = [self._to_domain_entity(document) for document in items]
+        return PaginatedResponse(total=total, limit=pagination.limit, items=entities)
+
     def get_all(self, pagination: Pagination | None = None) -> PaginatedResponse[T]:
         pagination = pagination or Pagination()
         skip = (pagination.page - 1) * pagination.limit
-
         total = self.collection.count_documents({})
         cursor = self.collection.find({}).skip(skip).limit(pagination.limit)
-        items = [self._to_domain_entity(doc) for doc in cursor]
-
-        return PaginatedResponse(total=total, limit=pagination.limit, items=items)
+        items = list(cursor)
+        return self._paginate_cursor(pagination=pagination, total=total, items=items)
 
     def get_one(self, entity_id: EntityId, /) -> T | None:
         document = self.collection.find_one({"_id": ObjectId(entity_id)})
