@@ -1,14 +1,15 @@
-from typing import Generic, TypeVar
+from typing import Generic, NewType, TypeVar
 
 from pydantic import BaseModel, NonNegativeInt, PositiveInt
 
 T = TypeVar("T", bound="DomainModel")
+EntityId = NewType("EntityId", str)
 
 DEFAULT_PAGINATION_LIMIT = 10
 
 
 class DomainModel(BaseModel):
-    id: str
+    id: EntityId
 
 
 class Pagination(BaseModel):
