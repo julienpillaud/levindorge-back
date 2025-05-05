@@ -7,8 +7,12 @@ from pymongo.database import Database
 
 from app.core.config import Settings
 from app.domain.articles.repository import ArticleRepositoryProtocol
+from app.domain.categories.repository import CategoryRepositoryProtocol
 from app.domain.domain import TransactionalContextProtocol
+from app.domain.producers.repository import ProducerRepositoryProtocol
 from app.infrastructure.repository.articles import ArticleRepository
+from app.infrastructure.repository.categories import CategoryRepository
+from app.infrastructure.repository.producers import ProducerRepository
 
 
 class Context(TransactionalContextProtocol):
@@ -25,6 +29,14 @@ class Context(TransactionalContextProtocol):
 
     def rollback(self) -> None:
         pass
+
+    @property
+    def category_repository(self) -> CategoryRepositoryProtocol:
+        return CategoryRepository(database=self.database)
+
+    @property
+    def producer_repository(self) -> ProducerRepositoryProtocol:
+        return ProducerRepository(database=self.database)
 
     @property
     def article_repository(self) -> ArticleRepositoryProtocol:
