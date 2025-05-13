@@ -5,7 +5,13 @@ from contextlib import contextmanager
 from functools import wraps
 from typing import Concatenate, ParamSpec, Protocol, TypeVar
 
-from app.domain.articles.commands import get_articles_command
+from app.domain.articles.commands import (
+    create_article_command,
+    delete_article_command,
+    get_article_command,
+    get_articles_command,
+    update_article_command,
+)
 from app.domain.context import ContextProtocol
 
 logger = logging.getLogger(__name__)
@@ -56,3 +62,7 @@ class Domain:
         self.context = context
 
         self.get_articles = self.command_handler(get_articles_command)
+        self.get_article = self.command_handler(get_article_command)
+        self.create_article = self.command_handler(create_article_command)
+        self.update_article = self.command_handler(update_article_command)
+        self.delete_article = self.command_handler(delete_article_command)

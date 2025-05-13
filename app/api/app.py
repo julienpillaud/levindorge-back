@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.articles.router import router as articles_router
+from app.api.handlers import add_exceptions_handler
 from app.core.config import Settings
 
 
@@ -24,6 +25,7 @@ def create_app(settings: Settings) -> FastAPI:
             allow_headers=["*"],
         )
 
+    add_exceptions_handler(app=app)
     app.include_router(articles_router)
 
     @app.get("/")
