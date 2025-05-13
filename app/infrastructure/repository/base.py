@@ -4,6 +4,7 @@ from bson import ObjectId
 from pymongo.database import Database
 
 from app.domain.entities import DomainModel, EntityId, PaginatedResponse, Pagination
+from app.domain.exceptions import NotFoundError
 from app.domain.repository import BaseRepositoryProtocol
 
 T = TypeVar("T", bound=DomainModel)
@@ -30,6 +31,16 @@ class BaseRepository(BaseRepositoryProtocol[T], Generic[T]):
     def _to_database_entity(entity: T) -> MongoDocument:
         return entity.model_dump(exclude={"id"})
 
+    def _get_entity_by_id(self, entity_id: ObjectId, /) -> T | None:
+        db_entity = self.collection.find_one({"_id": entity_id})
+        return self._to_domain_entity(db_entity) if db_entity else None
+
+    def _get_entity_by_id_or_raise(self, entity_id: ObjectId) -> T:
+        entity = self._get_entity_by_id(entity_id)
+        if not entity:
+            raise NotFoundError(f"Entity '{entity_id}' not found")
+        return entity
+
     def _paginate_cursor(
         self,
         pagination: Pagination,
@@ -48,19 +59,17 @@ class BaseRepository(BaseRepositoryProtocol[T], Generic[T]):
         return self._paginate_cursor(pagination=pagination, total=total, items=items)
 
     def get_one(self, entity_id: EntityId, /) -> T | None:
-        document = self.collection.find_one({"_id": ObjectId(entity_id)})
-        return self._to_domain_entity(document) if document else None
+        return self._get_entity_by_id(ObjectId(entity_id))
 
     def create(self, entity: T, /) -> T:
         db_entity = self._to_database_entity(entity)
         result = self.collection.insert_one(db_entity)
-        entity.id = EntityId(result.inserted_id)
-        return entity
+        return self._get_entity_by_id_or_raise(result.inserted_id)
 
     def update(self, entity: T, /) -> T:
         db_entity = self._to_database_entity(entity)
         self.collection.replace_one({"_id": ObjectId(entity.id)}, db_entity)
-        return entity
+        return self._get_entity_by_id_or_raise(ObjectId(entity.id))
 
-    def delete(self, entity_id: EntityId, /) -> None:
-        self.collection.delete_one({"_id": ObjectId(entity_id)})
+    def delete(self, entity: T, /) -> None:
+        self.collection.delete_one({"_id": ObjectId(entity.id)})

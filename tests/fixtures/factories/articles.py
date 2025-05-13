@@ -5,7 +5,6 @@ from pymongo.collection import Collection
 
 from app.domain.articles.entities import Article
 from app.domain.categories.entities import Category
-from app.domain.entities import EntityId
 from app.domain.producers.entities import Producer
 from app.infrastructure.repository.base import MongoDocument
 
@@ -30,7 +29,7 @@ class ArticleFactory(MongoBaseFactory[Article]):
         producer = self.producer_factory.create_one()
 
         return Article(
-            id=EntityId(""),
+            id=None,
             name=kwargs.get("name", self.faker.name()),
             category=Category.model_validate(category.model_dump()),
             producer=Producer.model_validate(producer.model_dump()),

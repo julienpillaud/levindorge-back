@@ -26,6 +26,35 @@ class ArticleRepository(BaseRepository[Article], ArticleRepositoryProtocol):
             producer=to_domain_entity(model=Producer, document=document["producer"]),
         )
 
+    @staticmethod
+    def _to_database_entity(entity: Article) -> MongoDocument:
+        return {
+            "name": entity.name,
+            "category_id": ObjectId(entity.category.id),
+            "producer_id": ObjectId(entity.producer.id),
+        }
+
+    def _get_entity_by_id(self, entity_id: ObjectId, /) -> Article | None:
+        pipeline = [
+            {"$match": {"_id": ObjectId(entity_id)}},
+            *self._aggregation_pipeline(),
+        ]
+        document = next(self.collection.aggregate(pipeline), None)
+        return (
+            Article(
+                id=EntityId(str(document["_id"])),
+                name=document["name"],
+                category=to_domain_entity(
+                    model=Category, document=document["category"]
+                ),
+                producer=to_domain_entity(
+                    model=Producer, document=document["producer"]
+                ),
+            )
+            if document
+            else None
+        )
+
     def get_all(
         self, pagination: Pagination | None = None
     ) -> PaginatedResponse[Article]:
@@ -42,14 +71,6 @@ class ArticleRepository(BaseRepository[Article], ArticleRepositoryProtocol):
         total = self.collection.count_documents({})
 
         return self._paginate_cursor(pagination=pagination, total=total, items=items)
-
-    def get_one(self, entity_id: EntityId, /) -> Article | None:
-        pipeline = [
-            {"$match": {"_id": ObjectId(entity_id)}},
-            *self._aggregation_pipeline(),
-        ]
-        document = next(self.collection.aggregate(pipeline), None)
-        return self._to_domain_entity(document) if document else None
 
     @staticmethod
     def _aggregation_pipeline() -> list[dict[str, Any]]:

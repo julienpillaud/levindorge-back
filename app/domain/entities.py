@@ -1,15 +1,35 @@
-from typing import Generic, NewType, TypeVar
+from typing import Annotated, Generic, NewType, TypeVar
 
-from pydantic import BaseModel, NonNegativeInt, PositiveInt
+from pydantic import (
+    BaseModel,
+    BeforeValidator,
+    NonNegativeInt,
+    PositiveInt,
+)
 
 T = TypeVar("T", bound="DomainModel")
 EntityId = NewType("EntityId", str)
 
+ENTITY_ID_LENGTH = 24
 DEFAULT_PAGINATION_LIMIT = 10
 
 
+def validate_entity_id(value: str | None) -> str | None:
+    if value is None:
+        return None
+
+    if len(value) != ENTITY_ID_LENGTH:
+        raise ValueError(f"Must be {ENTITY_ID_LENGTH} characters long")
+
+    try:
+        bytes.fromhex(value)
+        return value
+    except (TypeError, ValueError) as error:
+        raise ValueError("Invalid entity id") from error
+
+
 class DomainModel(BaseModel):
-    id: EntityId
+    id: Annotated[EntityId | None, BeforeValidator(validate_entity_id)]
 
 
 class Pagination(BaseModel):
