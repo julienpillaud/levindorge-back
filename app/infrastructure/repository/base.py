@@ -41,22 +41,25 @@ class BaseRepository(BaseRepositoryProtocol[T], Generic[T]):
             raise NotFoundError(f"Entity '{entity_id}' not found")
         return entity
 
-    def _paginate_cursor(
-        self,
-        pagination: Pagination,
-        total: int,
-        items: list[MongoDocument],
-    ) -> PaginatedResponse[T]:
-        entities = [self._to_domain_entity(document) for document in items]
-        return PaginatedResponse(total=total, limit=pagination.limit, items=entities)
+    @staticmethod
+    def _aggregation_pipeline() -> list[dict[str, Any]]:
+        return []
 
     def get_all(self, pagination: Pagination | None = None) -> PaginatedResponse[T]:
         pagination = pagination or Pagination()
         skip = (pagination.page - 1) * pagination.limit
-        total = self.collection.count_documents({})
-        cursor = self.collection.find({}).skip(skip).limit(pagination.limit)
-        items = list(cursor)
-        return self._paginate_cursor(pagination=pagination, total=total, items=items)
+
+        pipeline = self._aggregation_pipeline()
+
+        count_pipeline = [*pipeline, {"$count": "total"}]
+        count_result = list(self.collection.aggregate(count_pipeline))
+        total = count_result[0]["total"] if count_result else 0
+
+        paginated_pipeline = [*pipeline, {"$skip": skip}, {"$limit": pagination.limit}]
+        items_db = self.collection.aggregate(paginated_pipeline)
+        items = [self._to_domain_entity(item) for item in items_db]
+
+        return PaginatedResponse(total=total, limit=pagination.limit, items=items)
 
     def get_one(self, entity_id: EntityId, /) -> T | None:
         return self._get_entity_by_id(ObjectId(entity_id))

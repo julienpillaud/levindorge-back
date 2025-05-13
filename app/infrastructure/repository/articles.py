@@ -5,7 +5,7 @@ from bson import ObjectId
 from app.domain.articles.entities import Article
 from app.domain.articles.repository import ArticleRepositoryProtocol
 from app.domain.categories.entities import Category
-from app.domain.entities import EntityId, PaginatedResponse, Pagination
+from app.domain.entities import EntityId
 from app.domain.producers.entities import Producer
 from app.infrastructure.repository.base import (
     BaseRepository,
@@ -54,23 +54,6 @@ class ArticleRepository(BaseRepository[Article], ArticleRepositoryProtocol):
             if document
             else None
         )
-
-    def get_all(
-        self, pagination: Pagination | None = None
-    ) -> PaginatedResponse[Article]:
-        pagination = pagination or Pagination()
-        skip = (pagination.page - 1) * pagination.limit
-
-        pipeline = [
-            *self._aggregation_pipeline(),
-            {"$skip": skip},
-            {"$limit": pagination.limit},
-        ]
-
-        items = list(self.collection.aggregate(pipeline))
-        total = self.collection.count_documents({})
-
-        return self._paginate_cursor(pagination=pagination, total=total, items=items)
 
     @staticmethod
     def _aggregation_pipeline() -> list[dict[str, Any]]:

@@ -8,17 +8,17 @@ from .categories import CategoryFactory
 from .producers import ProducerFactory
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def category_factory(database: Database[MongoDocument]) -> CategoryFactory:
     return CategoryFactory(collection=database["categories"])
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def producer_factory(database: Database[MongoDocument]) -> ProducerFactory:
     return ProducerFactory(collection=database["producers"])
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def article_factory(
     database: Database[MongoDocument],
     category_factory: CategoryFactory,

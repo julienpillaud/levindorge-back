@@ -12,7 +12,10 @@ from app.api.dependencies import get_settings
 from app.core.config import Settings
 from app.infrastructure.repository.base import MongoDocument
 
-pytest_plugins = ["tests.fixtures.factories.fixtures"]
+pytest_plugins = [
+    "tests.fixtures.factories.fixtures",
+    "tests.fixtures.repositories",
+]
 
 load_dotenv()
 
@@ -27,7 +30,7 @@ def settings() -> Settings:
     )
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def database(settings: Settings) -> Iterator[Database[MongoDocument]]:
     client: MongoClient[MongoDocument] = MongoClient(settings.MONGO_URI)
     database: Database[MongoDocument] = client[settings.MONGO_DATABASE]
