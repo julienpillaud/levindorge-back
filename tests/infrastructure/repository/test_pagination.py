@@ -7,7 +7,7 @@ from ...fixtures.factories.articles import ArticleFactory
 def test_pagination_request_less_than_total(
     article_factory: ArticleFactory,
     article_repository: ArticleRepositoryProtocol,
-):
+) -> None:
     # Arrange
     total_number = 9
     request_number = 5
@@ -26,7 +26,7 @@ def test_pagination_request_less_than_total(
 def test_pagination_request_more_than_total(
     article_factory: ArticleFactory,
     article_repository: ArticleRepositoryProtocol,
-):
+) -> None:
     # Arrange
     total_number = 9
     request_number = 5
@@ -45,7 +45,7 @@ def test_pagination_request_more_than_total(
 def test_pagination_out_of_range(
     article_factory: ArticleFactory,
     article_repository: ArticleRepositoryProtocol,
-):
+) -> None:
     # Arrange
     total_number = 9
     request_number = 5

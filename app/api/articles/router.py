@@ -1,11 +1,12 @@
-from typing import Annotated
+from typing import Annotated, Any
 
+from cleanstack.entities import EntityId
 from fastapi import APIRouter, Depends, Query, status
 
 from app.api.dependencies import get_domain
 from app.domain.articles.entities import Article, ArticleCreate, ArticleUpdate
 from app.domain.domain import Domain
-from app.domain.entities import EntityId, PaginatedResponse, Pagination
+from app.domain.entities import PaginatedResponse, Pagination
 
 router = APIRouter(prefix="/articles", tags=["articles"])
 
@@ -14,17 +15,23 @@ router = APIRouter(prefix="/articles", tags=["articles"])
 def get_articles(
     domain: Annotated[Domain, Depends(get_domain)],
     pagination: Annotated[Pagination, Query()],
-):
+) -> Any:
     return domain.get_articles(pagination=pagination)
 
 
 @router.get("/{article_id}", response_model=Article)
-def get_article(domain: Annotated[Domain, Depends(get_domain)], article_id: EntityId):
+def get_article(
+    domain: Annotated[Domain, Depends(get_domain)],
+    article_id: EntityId,
+) -> Any:
     return domain.get_article(article_id=article_id)
 
 
 @router.post("", response_model=Article, status_code=status.HTTP_201_CREATED)
-def create_article(domain: Annotated[Domain, Depends(get_domain)], data: ArticleCreate):
+def create_article(
+    domain: Annotated[Domain, Depends(get_domain)],
+    data: ArticleCreate,
+) -> Any:
     return domain.create_article(data=data)
 
 
@@ -33,12 +40,13 @@ def update_article(
     domain: Annotated[Domain, Depends(get_domain)],
     article_id: EntityId,
     data: ArticleUpdate,
-):
+) -> Any:
     return domain.update_article(article_id=article_id, data=data)
 
 
 @router.delete("/{article_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_article(
-    domain: Annotated[Domain, Depends(get_domain)], article_id: EntityId
-):
+    domain: Annotated[Domain, Depends(get_domain)],
+    article_id: EntityId,
+) -> None:
     domain.delete_article(article_id=article_id)

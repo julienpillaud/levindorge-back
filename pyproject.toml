@@ -3,26 +3,29 @@ name = "levindorge-back"
 version = "0.0.9"
 requires-python = ">=3.13"
 dependencies = [
-    "fastapi>=0.115.12",
-    "pydantic-settings>=2.9.1",
-    "pymongo>=4.12.0",
-    "uvicorn>=0.34.2",
+    "cleanstack",
+    "fastapi>=0.116.1",
+    "logfire[fastapi]>=4.1.0",
+    "polyfactory>=2.22.1",
+    "pydantic-settings>=2.10.1",
+    "pymongo>=4.13.2",
+    "uvicorn>=0.35.0",
 ]
+
+[tool.uv.sources]
+cleanstack = { git = "https://github.com/julienpillaud/cleanstack", tag = "0.4.0" }
 
 [dependency-groups]
 dev = [
-    "coverage>=7.8.0",
-    "faker>=37.1.0",
     "httpx>=0.28.1",
-    "pre-commit>=4.2",
-    "pyright==1.1.400",
-    "pytest>=8.3",
-    "ruff==0.11.7",
+    "mypy>=1.17.1",
+    "pre-commit>=4.2.0",
+    "pytest>=8.4.1",
+    "ruff==0.12.7",
 ]
 
 [tool.ruff]
 output-format = "concise"
-
 [tool.ruff.lint]
 select = [
     "E", "W",  # pycodestyle
@@ -34,16 +37,19 @@ select = [
     "PL",  # Pylint
     "RUF",
 ]
+ignore = [
+    "UP046",  # non-pep695-generic-class
+    "UP047",  # non-pep695-generic-function
+]
 
-[tool.pyright]
-venvPath = "."
-venv = ".venv"
-typeCheckingMode = "strict"
+[tool.mypy]
+strict = true
+plugins = ['pydantic.mypy']
+
+[tool.logfire]
+ignore_no_config=true
 
 [tool.pytest.ini_options]
-testpaths = [
-    "tests",
-]
+testpaths = ["tests"]
 log_cli = true
-log_cli_level = "INFO"
 log_cli_format = "%(asctime)s [%(levelname)8s] %(name)30s - %(message)s"

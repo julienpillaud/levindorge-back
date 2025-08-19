@@ -8,7 +8,7 @@ from ...fixtures.factories.categories import CategoryFactory
 from ...fixtures.factories.producers import ProducerFactory
 
 
-def test_get_articles(article_factory: ArticleFactory, client: TestClient):
+def test_get_articles(article_factory: ArticleFactory, client: TestClient) -> None:
     # Arrange
     number_of_articles = 3
     article_factory.create_many(number_of_articles)
@@ -24,7 +24,7 @@ def test_get_articles(article_factory: ArticleFactory, client: TestClient):
     assert len(result["items"]) == number_of_articles
 
 
-def test_get_article(article_factory: ArticleFactory, client: TestClient):
+def test_get_article(article_factory: ArticleFactory, client: TestClient) -> None:
     # Arrange
     article = article_factory.create_one()
 
@@ -40,7 +40,7 @@ def test_get_article(article_factory: ArticleFactory, client: TestClient):
     assert result["producer"] == article.producer.model_dump()
 
 
-def test_get_article_not_found(client: TestClient):
+def test_get_article_not_found(client: TestClient) -> None:
     # Act
     article_id = "112233445566778899aabbcc"
     response = client.get(f"/articles/{article_id}")
@@ -55,7 +55,7 @@ def test_create_article(
     category_factory: CategoryFactory,
     producer_factory: ProducerFactory,
     client: TestClient,
-):
+) -> None:
     # Arrange
     article_name = "Test Article"
     category = category_factory.create_one()
@@ -81,7 +81,7 @@ def test_create_article(
 def test_create_article_invalid_category(
     producer_factory: ProducerFactory,
     client: TestClient,
-):
+) -> None:
     # Arrange
     article_name = "Test Article"
     category_id = "112233445566778899aabbcc"
@@ -111,7 +111,7 @@ def test_create_article_invalid_category(
 def test_create_article_invalid_producer(
     category_factory: CategoryFactory,
     client: TestClient,
-):
+) -> None:
     # Arrange
     article_name = "Test Article"
     producer_id = "112233445566778899aabbcc"
@@ -141,7 +141,7 @@ def test_create_article_invalid_producer(
 def test_update_article(
     article_factory: ArticleFactory,
     client: TestClient,
-):
+) -> None:
     # Arrange
     article = article_factory.create_one()
     data = {"name": "Updated Name"}
@@ -162,7 +162,7 @@ def test_update_article_category(
     category_factory: CategoryFactory,
     article_factory: ArticleFactory,
     client: TestClient,
-):
+) -> None:
     # Arrange
     category = category_factory.create_one()
     article = article_factory.create_one()
@@ -184,7 +184,7 @@ def test_update_article_producer(
     producer_factory: ProducerFactory,
     article_factory: ArticleFactory,
     client: TestClient,
-):
+) -> None:
     # Arrange
     producer = producer_factory.create_one()
     article = article_factory.create_one()
@@ -202,7 +202,7 @@ def test_update_article_producer(
     assert result["producer"] == producer.model_dump()
 
 
-def test_update_article_not_found(client: TestClient):
+def test_update_article_not_found(client: TestClient) -> None:
     # Arrange
     article_id = "112233445566778899aabbcc"
     data = {"name": "Updated Name"}
@@ -219,7 +219,7 @@ def test_update_article_not_found(client: TestClient):
 def test_update_article_invalid_category(
     article_factory: ArticleFactory,
     client: TestClient,
-):
+) -> None:
     # Arrange
     category_id = "112233445566778899aabbcc"
     article = article_factory.create_one()
@@ -244,7 +244,7 @@ def test_update_article_invalid_category(
 def test_delete_article(
     article_factory: ArticleFactory,
     client: TestClient,
-):
+) -> None:
     # Arrange
     article = article_factory.create_one()
 
@@ -257,7 +257,7 @@ def test_delete_article(
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
-def test_delete_article_not_found(client: TestClient):
+def test_delete_article_not_found(client: TestClient) -> None:
     # Arrange
     article_id = "112233445566778899aabbcc"
 

@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     MONGO_DATABASE: str
     MONGO_QUERY: str = "retryWrites=true&w=majority"
 
-    @computed_field
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def MONGO_URI(self) -> str:
         return (

@@ -29,7 +29,7 @@ def create_app(settings: Settings) -> FastAPI:
     app.include_router(articles_router)
 
     @app.get("/")
-    async def root():  # type: ignore[reportUnusedFunction]
+    async def root() -> dict[str, str]:
         return {
             "title": settings.PROJECT_NAME,
             "version": settings.API_VERSION,

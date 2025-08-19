@@ -1,7 +1,7 @@
+from cleanstack.entities import DomainModel, EntityId
 from pydantic import BaseModel
 
 from app.domain.categories.entities import Category
-from app.domain.entities import DomainModel, EntityId
 from app.domain.producers.entities import Producer
 
 

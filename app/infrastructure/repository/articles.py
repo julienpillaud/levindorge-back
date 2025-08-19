@@ -1,11 +1,11 @@
 from typing import Any
 
 from bson import ObjectId
+from cleanstack.entities import EntityId
 
 from app.domain.articles.entities import Article
 from app.domain.articles.repository import ArticleRepositoryProtocol
 from app.domain.categories.entities import Category
-from app.domain.entities import EntityId
 from app.domain.producers.entities import Producer
 from app.infrastructure.repository.base import (
     BaseRepository,
@@ -30,8 +30,8 @@ class ArticleRepository(BaseRepository[Article], ArticleRepositoryProtocol):
     def _to_database_entity(entity: Article) -> MongoDocument:
         return {
             "name": entity.name,
-            "category_id": ObjectId(entity.category.id),
-            "producer_id": ObjectId(entity.producer.id),
+            "category_id": entity.category.id,
+            "producer_id": entity.producer.id,
         }
 
     def _get_entity_by_id(self, entity_id: ObjectId, /) -> Article | None:

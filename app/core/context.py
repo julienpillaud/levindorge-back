@@ -7,7 +7,7 @@ from pymongo.database import Database
 from app.core.config import Settings
 from app.domain.articles.repository import ArticleRepositoryProtocol
 from app.domain.categories.repository import CategoryRepositoryProtocol
-from app.domain.domain import TransactionalContextProtocol
+from app.domain.context import ContextProtocol
 from app.domain.producers.repository import ProducerRepositoryProtocol
 from app.infrastructure.repository.articles import ArticleRepository
 from app.infrastructure.repository.base import MongoDocument
@@ -15,7 +15,7 @@ from app.infrastructure.repository.categories import CategoryRepository
 from app.infrastructure.repository.producers import ProducerRepository
 
 
-class Context(TransactionalContextProtocol):
+class Context(ContextProtocol):
     def __init__(self, settings: Settings):
         self.client: MongoClient[MongoDocument] = MongoClient(settings.MONGO_URI)
         self.database: Database[MongoDocument] = self.client[settings.MONGO_DATABASE]

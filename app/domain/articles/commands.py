@@ -1,10 +1,14 @@
+import uuid
 from typing import Any
+
+from cleanstack.entities import EntityId
+from cleanstack.exceptions import NotFoundError
 
 from app.domain.articles.entities import Article, ArticleCreate, ArticleUpdate
 from app.domain.categories.entities import Category
 from app.domain.context import ContextProtocol
-from app.domain.entities import EntityId, PaginatedResponse, Pagination
-from app.domain.exceptions import NotFoundError, UnprocessableContentError
+from app.domain.entities import PaginatedResponse, Pagination
+from app.domain.exceptions import UnprocessableContentError
 from app.domain.producers.entities import Producer
 
 
@@ -38,7 +42,7 @@ def create_article_command(context: ContextProtocol, data: ArticleCreate) -> Art
         raise UnprocessableContentError(invalid_refs)
 
     article = Article(
-        id=None,
+        id=uuid.uuid4(),
         name=data.name,
         category=category,
         producer=producer,

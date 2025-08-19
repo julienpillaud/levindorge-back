@@ -5,21 +5,17 @@ from fastapi import Depends
 
 from app.core.config import Settings
 from app.core.context import Context
-from app.domain.domain import Domain, TransactionalContextProtocol
+from app.domain.domain import Domain
 
 
 @lru_cache
 def get_settings() -> Settings:
-    return Settings(_env_file=".env")  # type: ignore
+    return Settings(_env_file=".env")
 
 
-def get_context(
-    settings: Annotated[Settings, Depends(get_settings)],
-) -> TransactionalContextProtocol:
+def get_context(settings: Annotated[Settings, Depends(get_settings)]) -> Context:
     return Context(settings=settings)
 
 
-def get_domain(
-    context: Annotated[TransactionalContextProtocol, Depends(get_context)],
-) -> Domain:
+def get_domain(context: Annotated[Context, Depends(get_context)]) -> Domain:
     return Domain(context=context)

@@ -1,4 +1,4 @@
-from app.domain.entities import DomainModel
+from cleanstack.entities import DomainModel
 
 
 class Category(DomainModel):

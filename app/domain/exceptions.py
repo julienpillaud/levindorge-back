@@ -1,13 +1,6 @@
 from typing import Any
 
-
-class DomainError(Exception):
-    def __init__(self, detail: Any):
-        self.detail = detail
-
-
-class NotFoundError(DomainError):
-    pass
+from cleanstack.exceptions import DomainError
 
 
 class UnprocessableContentError(DomainError):
